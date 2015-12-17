@@ -1,13 +1,33 @@
 buildscript {
 	repositories {
+		mavenLocal()
 		maven { url "https://repo.spring.io/plugins-release" }
 	}
 	dependencies {
+		classpath "com.srcclr:gradle:latest.integration"
 		classpath("org.springframework.build.gradle:propdeps-plugin:0.0.7")
 		classpath("org.asciidoctor:asciidoctor-gradle-plugin:1.5.2")
 		classpath("io.spring.gradle:docbook-reference-plugin:0.3.1")
 		classpath("ws.antonov.gradle.plugins:gradle-plugin-protobuf:0.9.1")
 	}
+}
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
+apply plugin: "srcclr"
+
+srcclr {
+  apiUrl = integrationTestApiUrl
+  userToken = "none"
+}
+
+task srcclrTest << {
+  println("Integration Test: Verifing results")
+
+  int collectedSize = srcclrData.evidence.size()
+  assert(320 == collectedSize)
 }
 
 ext {
